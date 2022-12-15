@@ -4,12 +4,12 @@ print(nx.nx_agraph.read_dot("roadmap.dot"))
 print()
 
 graph = nx.nx_agraph.read_dot("roadmap.dot")
-graph.nodes["london"]
+print(graph.nodes["london"])
 print()
 
 from GRAPH import City, load_graph
 nodes, graph = load_graph("roadmap.dot", City.from_dict)
-nodes["london"]
+print(nodes["london"])
 print()
 
 print(graph)
