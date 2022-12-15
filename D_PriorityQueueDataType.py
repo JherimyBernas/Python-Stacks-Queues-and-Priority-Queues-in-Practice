@@ -1,7 +1,7 @@
 print("\nPROGRAMMED BY: JHERIMY S. BERNAS")
 print("COURSE, YR. & SECTION: BSCOE 2-2\n")
 
-from D_PriorityQueueDataTypeClass import PriorityQueue1
+from QUEUES import PriorityQueue1
 CRITICAL = 3
 IMPORTANT = 2
 NEUTRAL = 1
@@ -13,7 +13,7 @@ messages1.enqueue_with_priority(IMPORTANT, "Hazard lights turned on")
 print(messages1.dequeue())
 print()
 
-from D_PriorityQueueDataTypeClass import PriorityQueue2
+from QUEUES import PriorityQueue2
 CRITICAL = 3
 IMPORTANT = 2
 NEUTRAL = 1
