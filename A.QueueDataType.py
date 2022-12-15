@@ -1,7 +1,7 @@
 print("\nPROGRAMMED BY: JHERIMY S. BERNAS")
 print("COURSE, YR. & SECTION: BSCOE 2-2\n")
 
-from A_BuildingQueueDataTypeClass import Queue1
+from A_QueueDataTypeClass import Queue1
 fifo = Queue1()
 fifo.enqueue("1st")
 fifo.enqueue("2nd")
@@ -11,7 +11,7 @@ print(fifo.dequeue())
 print(fifo.dequeue())
 
 print()
-from A_BuildingQueueDataTypeClass import Queue2
+from A_QueueDataTypeClass import Queue2
 fifo = Queue2("1st", "2nd", "3rd")
 print(len(fifo))
 print()
