@@ -1,7 +1,7 @@
 print("\nPROGRAMMED BY: JHERIMY S. BERNAS")
 print("COURSE, YR. & SECTION: BSCOE 2-2\n")
 
-from BuildingStackDataTypeClass import Stack
+from B_BuildingStackDataTypeClass import Stack
 
 lifo = Stack("1st", "2nd", "3rd")
 for element in lifo:
