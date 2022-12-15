@@ -13,8 +13,9 @@ print(fifo.dequeue())
 print()
 from BuildingQueueDataTypeClass import Queue2
 fifo = Queue2("1st", "2nd", "3rd")
-len(fifo)
+print(len(fifo))
+print()
 for element in fifo:
     print(element)
-len(fifo)
+print(len(fifo))
 print()
