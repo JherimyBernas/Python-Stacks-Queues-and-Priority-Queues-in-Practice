@@ -1,6 +1,5 @@
 import networkx as nx
 from GRAPH import City, load_graph
-from I_ShortestPathUsingBreadthFirstTraversal import city2
 
 
 def is_twentieth_century(year):
@@ -45,7 +44,7 @@ def is_twentieth_century(city):
 
 nodes, graph = load_graph("roadmap.dot", City.from_dict)
 city = bfs(graph, nodes["edinburgh"], is_twentieth_century)
-city.name
+print(city.name)
 print()
 for city in breadth_first_traverse1(graph, nodes["edinburgh"]):
     print(city.name)
@@ -64,8 +63,9 @@ def is_twentieth_century(city):
 
 nodes, graph = load_graph("roadmap.dot", City.from_dict)
 city = bfs(graph, nodes["edinburgh"], is_twentieth_century)
-city.name
+print(city.name)
 print()
+
 for city in breadth_first_traverse2(graph, nodes["edinburgh"]):
     print(city.name)
 print()

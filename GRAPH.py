@@ -1,7 +1,8 @@
 import networkx as nx
 from typing import NamedTuple
-from QUEUES import Queue2
+from QUEUES import Queue2, Stack
 from collections import deque
+
 
 
 def load_graph(filename, node_factory):
@@ -38,7 +39,7 @@ def breadth_first_traverse1(graph, source):
     queue = Queue2(source)
     visited = {source}
     while queue:
-        yield (node := queue.dequeue())
+        yield node := queue.dequeue()
         for neighbor in graph.neighbors(node):
             if neighbor not in visited:
                 visited.add(neighbor)
@@ -54,7 +55,7 @@ def breadth_first_traverse2(graph, source, order_by=None):
     queue = Queue2(source)
     visited = {source}
     while queue:
-        yield (node := queue.dequeue())
+        yield node := queue.dequeue()
         neighbors = list(graph.neighbors(node))
         if order_by:
             neighbors.sort(key=order_by)
@@ -102,3 +103,43 @@ def retrace(previous, source, destination):
 
 def connected(graph, source, destination):
     return shortest_path(graph, source, destination) is not None
+
+
+def depth_first_traverse(graph, source, order_by=None):
+    stack = Stack(source)
+    visited = set()
+    while stack:
+        if (node := stack.dequeue()) not in visited:
+            yield node
+            visited.add(node)
+            neighbors = list(graph.neighbors(node))
+            if order_by:
+                neighbors.sort(key=order_by)
+            for neighbor in reversed(neighbors):
+                stack.enqueue(neighbor)
+
+
+def recursive_depth_first_traverse(graph, source, order_by=None):
+    visited = set()
+    def visit(node):
+        yield node
+        visited.add(node)
+        neighbors = list(graph.neighbors(node))
+        if order_by:
+            neighbors.sort(key=order_by)
+        for neighbor in neighbors:
+            if neighbor not in visited:
+                yield from visit(neighbor)
+    return visit(source)
+
+
+def breadth_first_search(graph, source, predicate, order_by=None):
+    return search(breadth_first_traverse2, graph, source, predicate, order_by)
+
+def depth_first_search(graph, source, predicate, order_by=None):
+    return search(depth_first_traverse, graph, source, predicate, order_by)
+
+def search(traverse, graph, source, predicate, order_by=None):
+    for node in traverse(graph, source, order_by):
+        if predicate(node):
+            return node
