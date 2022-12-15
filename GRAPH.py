@@ -1,6 +1,8 @@
 import networkx as nx
 from typing import NamedTuple
 from QUEUES import Queue2
+from collections import deque
+
 
 def load_graph(filename, node_factory):
     graph = nx.nx_agraph.read_dot(filename)
@@ -12,6 +14,7 @@ name: node_factory(attributes)
         (nodes[name1], nodes[name2], weights)
         for name1, name2, weights in graph.edges(data=True)
     )
+
 
 class City(NamedTuple):
     name: str
@@ -31,7 +34,6 @@ class City(NamedTuple):
         )
 
 
-
 def breadth_first_traverse1(graph, source):
     queue = Queue2(source)
     visited = {source}
@@ -48,7 +50,6 @@ def breadth_first_search1(graph, source, predicate):
             return node
 
 
-
 def breadth_first_traverse2(graph, source, order_by=None):
     queue = Queue2(source)
     visited = {source}
@@ -62,7 +63,42 @@ def breadth_first_traverse2(graph, source, order_by=None):
                 visited.add(neighbor)
                 queue.enqueue(neighbor)
 
+
 def breadth_first_search2(graph, source, predicate, order_by=None):
     for node in breadth_first_traverse2(graph, source, order_by):
         if predicate(node):
             return node
+
+
+def shortest_path(graph, source, destination, order_by=None):
+    queue = Queue2(source)
+    visited = {source}
+    previous = {}
+    while queue:
+        node = queue.dequeue()
+        neighbors = list(graph.neighbors(node))
+        if order_by:
+            neighbors.sort(key=order_by)
+        for neighbor in neighbors:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.enqueue(neighbor)
+                previous[neighbor] = node
+                if neighbor == destination:
+                    return retrace(previous, source, destination)
+
+
+def retrace(previous, source, destination):
+    path = deque()
+    current = destination
+    while current != source:
+        path.appendleft(current)
+        current = previous.get(current)
+        if current is None:
+            return None
+    path.appendleft(source)
+    return list(path)
+
+
+def connected(graph, source, destination):
+    return shortest_path(graph, source, destination) is not None
