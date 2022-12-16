@@ -14,38 +14,11 @@ from rich.console import Group
 from rich.live import Live
 from rich.panel import Panel
 
-
 QUEUE_TYPES = {
     "fifo": Queue,
     "lifo": LifoQueue,
     "heap": PriorityQueue
 }
-
-
-def main(args):
-    buffer = QUEUE_TYPES[args.queue]()
-    products = PRIORITIZED_PRODUCTS if args.queue == "heap" else PRODUCTS
-    producers = [
-        Producer(args.producer_speed, buffer, products)
-        for _ in range(args.producers)
-    ]
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-q", "--queue", choices=QUEUE_TYPES, default="fifo")
-    parser.add_argument("-p", "--producers", type=int, default=3)
-    parser.add_argument("-c", "--consumers", type=int, default=2)
-    parser.add_argument("-ps", "--producer-speed", type=int, default=1)
-    parser.add_argument("-cs", "--consumer-speed", type=int, default=1)
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    try:
-        main(parse_args())
-    except KeyboardInterrupt:
-        pass
 
 PRODUCTS = (
     ":balloon:",
@@ -63,6 +36,28 @@ PRODUCTS = (
     ":teddy_bear:",
     ":thread:",
     ":yo-yo:",
+)
+
+
+@dataclass(order=True)
+class Product:
+    priority: int
+    label: str = field(compare=False)
+
+    def __str__(self):
+        return self.label
+
+
+class Priority(IntEnum):
+    HIGH = 1
+    MEDIUM = 2
+    LOW = 3
+
+
+PRIORITIZED_PRODUCTS = (
+    Product(Priority.HIGH, ":1st_place_medal:"),
+    Product(Priority.MEDIUM, ":2nd_place_medal:"),
+    Product(Priority.LOW, ":3rd_place_medal:"),
 )
 
 
@@ -96,6 +91,28 @@ class Worker(threading.Thread):
             self.progress += 1
 
 
+class Producer(Worker):
+    def __init__(self, speed, buffer, products):
+        super().__init__(speed, buffer)
+        self.products = products
+
+    def run(self):
+        while True:
+            self.product = choice(self.products)
+            self.simulate_work()
+            self.buffer.put(self.product)
+            self.simulate_idle()
+
+
+class Consumer(Worker):
+    def run(self):
+        while True:
+            self.product = self.buffer.get()
+            self.simulate_work()
+            self.buffer.task_done()
+            self.simulate_idle()
+
+
 class View:
     def __init__(self, buffer, producers, consumers):
         self.buffer = buffer
@@ -104,7 +121,7 @@ class View:
 
     def animate(self):
         with Live(
-            self.render(), screen=True, refresh_per_second=10
+                self.render(), screen=True, refresh_per_second=10
         ) as live:
             while True:
                 live.update(self.render())
@@ -144,32 +161,11 @@ class View:
         return Panel(align, height=5, title=title)
 
 
-class Producer(Worker):
-    def __init__(self, speed, buffer, products):
-        super().__init__(speed, buffer)
-        self.products = products
-
-    def run(self):
-        while True:
-            self.product = choice(self.products)
-            self.simulate_work()
-            self.buffer.put(self.product)
-            self.simulate_idle()
-
-
-class Consumer(Worker):
-    def run(self):
-        while True:
-            self.product = self.buffer.get()
-            self.simulate_work()
-            self.buffer.task_done()
-            self.simulate_idle()
-
-
 def main(args):
     buffer = QUEUE_TYPES[args.queue]()
+    products = PRIORITIZED_PRODUCTS if args.queue == "heap" else PRODUCTS
     producers = [
-        Producer(args.producer_speed, buffer, PRODUCTS)
+        Producer(args.producer_speed, buffer, products)
         for _ in range(args.producers)
     ]
     consumers = [
@@ -186,23 +182,18 @@ def main(args):
     view.animate()
 
 
-@dataclass(order=True)
-class Product:
-    priority: int
-    label: str = field(compare=False)
-
-    def __str__(self):
-        return self.label
-
-
-class Priority(IntEnum):
-    HIGH = 1
-    MEDIUM = 2
-    LOW = 3
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-q", "--queue", choices=QUEUE_TYPES, default="fifo")
+    parser.add_argument("-p", "--producers", type=int, default=3)
+    parser.add_argument("-c", "--consumers", type=int, default=2)
+    parser.add_argument("-ps", "--producer-speed", type=int, default=1)
+    parser.add_argument("-cs", "--consumer-speed", type=int, default=1)
+    return parser.parse_args()
 
 
-PRIORITIZED_PRODUCTS = (
-    Product(Priority.HIGH, ":1st_place_medal:"),
-    Product(Priority.MEDIUM, ":2nd_place_medal:"),
-    Product(Priority.LOW, ":3rd_place_medal:"),
-)
+if __name__ == "__main__":
+    try:
+        main(parse_args())
+    except KeyboardInterrupt:
+        pass
