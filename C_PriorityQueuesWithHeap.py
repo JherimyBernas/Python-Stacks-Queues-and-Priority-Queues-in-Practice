@@ -1,8 +1,10 @@
+from heapq import heappop, heappush
+
 print("\nPROGRAMMED BY: JHERIMY S. BERNAS")
 print("COURSE, YR. & SECTION: BSCOE 2-2")
+print("Representing Priority Queues With a Heap")
 
 print("\n-----------------------------------------------------------------------------------------------------------\n")
-from heapq import heappush
 fruits = []
 heappush(fruits, "orange")
 heappush(fruits, "apple")
@@ -11,7 +13,6 @@ print(fruits)
 print()
 
 print("\n-----------------------------------------------------------------------------------------------------------\n")
-from heapq import heappop
 print(heappop(fruits))
 print(fruits)
 print()

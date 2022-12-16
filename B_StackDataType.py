@@ -1,8 +1,10 @@
+from QUEUES import Stack
+
 print("\nPROGRAMMED BY: JHERIMY S. BERNAS")
 print("COURSE, YR. & SECTION: BSCOE 2-2")
+print("Building a Stack Data Type")
 
 print("\n-----------------------------------------------------------------------------------------------------------\n")
-from QUEUES import Stack
 lifo = Stack("1st", "2nd", "3rd")
 for element in lifo:
     print(element)

@@ -4,11 +4,10 @@ from QUEUES import Queue2, Stack
 from collections import deque
 
 
-
 def load_graph(filename, node_factory):
     graph = nx.nx_agraph.read_dot(filename)
     nodes = {
-name: node_factory(attributes)
+        name: node_factory(attributes)
         for name, attributes in graph.nodes(data=True)
     }
     return nodes, nx.Graph(
@@ -20,7 +19,7 @@ name: node_factory(attributes)
 class City(NamedTuple):
     name: str
     country: str
-    year: int | None
+    year: int
     latitude: float
     longitude: float
 
@@ -39,11 +38,12 @@ def breadth_first_traverse1(graph, source):
     queue = Queue2(source)
     visited = {source}
     while queue:
-        yield node := queue.dequeue()
+        yield (node := queue.dequeue())
         for neighbor in graph.neighbors(node):
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.enqueue(neighbor)
+
 
 def breadth_first_search1(graph, source, predicate):
     for node in breadth_first_traverse1(graph, source):
@@ -55,7 +55,7 @@ def breadth_first_traverse2(graph, source, order_by=None):
     queue = Queue2(source)
     visited = {source}
     while queue:
-        yield node := queue.dequeue()
+        yield (node := queue.dequeue())
         neighbors = list(graph.neighbors(node))
         if order_by:
             neighbors.sort(key=order_by)
@@ -91,12 +91,14 @@ def shortest_path(graph, source, destination, order_by=None):
 
 def retrace(previous, source, destination):
     path = deque()
+
     current = destination
     while current != source:
         path.appendleft(current)
         current = previous.get(current)
         if current is None:
             return None
+
     path.appendleft(source)
     return list(path)
 
@@ -121,6 +123,7 @@ def depth_first_traverse(graph, source, order_by=None):
 
 def recursive_depth_first_traverse(graph, source, order_by=None):
     visited = set()
+
     def visit(node):
         yield node
         visited.add(node)
@@ -130,16 +133,20 @@ def recursive_depth_first_traverse(graph, source, order_by=None):
         for neighbor in neighbors:
             if neighbor not in visited:
                 yield from visit(neighbor)
+
     return visit(source)
 
 
 def breadth_first_search(graph, source, predicate, order_by=None):
     return search(breadth_first_traverse2, graph, source, predicate, order_by)
 
+
 def depth_first_search(graph, source, predicate, order_by=None):
     return search(depth_first_traverse, graph, source, predicate, order_by)
+
 
 def search(traverse, graph, source, predicate, order_by=None):
     for node in traverse(graph, source, order_by):
         if predicate(node):
             return node
+
