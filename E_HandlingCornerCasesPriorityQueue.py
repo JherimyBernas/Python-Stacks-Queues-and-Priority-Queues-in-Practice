@@ -1,18 +1,17 @@
 print("\nPROGRAMMED BY: JHERIMY S. BERNAS")
 print("COURSE, YR. & SECTION: BSCOE 2-2\n")
 
-from dataclasses import dataclass
+CRITICAL = 3
+IMPORTANT = 2
+NEUTRAL = 1
 
+from dataclasses import dataclass
 @dataclass
 class Message:
     event: str
 wipers = Message("Windshield wipers turned on")
 hazard_lights = Message("Hazard lights turned on")
 print(wipers < hazard_lights)
-
-CRITICAL = 3
-IMPORTANT = 2
-NEUTRAL = 1
 
 from QUEUES import PriorityQueue2
 messages1 = PriorityQueue2()
